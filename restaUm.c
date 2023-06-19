@@ -4,22 +4,28 @@
 #include <string.h>
 
 #define color_cyan "\e[0;36m"
-#define color_white "\e[0;37m"
+#define color_white "\e[0;97m"
 #define color_yellow "\e[0;33m"
 #define color_red "\e[0;31m"
 #define color_green "\e[0;32m"
 #define color_reset "\e[0m"
 #define color_blue_bhi "\e[1;94m"
 #define color_red_bhi "\e[1;91m"
+#define color_purple "\e[0;35m"
+
+#define XX "XXXXX"
 
 char tabuleiro[7][7];
 char pecaXchar, pecaYchar, destinoYchar, destinoXchar;
 int numI, i, j, scanVar, pecaX, pecaY, destinoX, destinoY, comeX, comeY;
 
 int scanVar, sysVar, sempre = 0, fimJogo1 = 0, fimJogo2 = 0, fimJogo3 = 0, fimJogo4 = 0, SAIR = 0;
-char menuPrincipal, menuJogos, jogo1, jogo2, jogo3, jogo4;
+char menuPrincipal, menuJogos, jogo1, jogo2, jogo3, jogo4, reescrever;
 
+char slotNumChar;
+int slotNum, VD, maior, menor, primeiro, terceiro, segundo;
 int main(){
+  
 
   
     //menu principal
@@ -38,6 +44,27 @@ int main(){
     //if 2
     //win ou digite 0 para sair
     //encerrar ou menu principal
+          struct score
+  {
+    char nick[6];
+    int vitorias;
+    int derrotas;
+    int VD;
+    int mexido;
+  };
+    struct score slot[3];
+    slot[0].vitorias = 0;
+    slot[0].derrotas = 0;
+    strcpy(slot[0].nick, XX);
+    slot[0].mexido = 0;
+    slot[1].vitorias = 0;
+    slot[1].derrotas = 0;
+    strcpy(slot[1].nick, XX);
+    slot[2].mexido = 0;
+    slot[2].vitorias = 0;
+    slot[2].derrotas = 0;
+    strcpy(slot[2].nick, XX);
+    slot[2].mexido = 0;
 
     do{
         sysVar = system("clear");
@@ -46,6 +73,7 @@ int main(){
     printf("|                           |\n");
     printf("| 1 - ESCOLHER FORMATO      |\n");
     printf("| 2 - CREDITOS              |\n");
+    printf("| 3 - SCORE                 |\n");  
     printf("| 0 - SAIR                  |\n");
     printf("|___________________________|\n");
       
@@ -54,6 +82,27 @@ int main(){
         while((getchar() != '\n')); //limpar buffer
 
         switch(menuPrincipal){
+
+        case '3': 
+          //atualizar VD
+          for(i = 0; i < 3; i++){
+            slot[i].VD = slot[i].vitorias - slot[i].derrotas;
+          }
+
+  
+        sysVar = system("clear");
+        printf(" ___________________________\n");
+    printf("|    RANK DE VITÓRIA   "color_green"VV"color_reset"/"color_red"DD"color_reset"|\n");
+    printf("|                           |\n");
+    printf("| 1 - %-5.5s            %02i/%02i|\n", slot[0].nick, slot[0].vitorias, slot[0].derrotas);
+    printf("| 2 - %-5.5s            %02i/%02i|\n", slot[1].nick, slot[1].vitorias, slot[1].derrotas);
+    printf("| 3 - %-5.5s            %02i/%02i|\n", slot[2].nick, slot[2].vitorias, slot[2].derrotas);
+    printf("|___________________________|\n");
+        
+        //getchar();
+        while((getchar() != '\n')); //limpar buffer
+        break;
+        
         case '2': 
         sysVar = system("clear");
         printf (" ___________________________\n");
@@ -68,6 +117,46 @@ int main(){
         while((getchar() != '\n')); //limpar buffer
         break;
         case'1':
+          slotNumChar = ' ';
+          do{
+        sysVar = system("clear");
+          printf("Escolha um slot de 1 a 3: ");
+          scanVar = scanf("%c", &slotNumChar);
+          while((getchar() != '\n')); //limpar buffer
+          
+          }while(slotNumChar != '1' && slotNumChar != '2' && slotNumChar != '3');
+          slotNum = slotNumChar - 49;
+
+          if(slot[slotNum].mexido == 0){   
+            printf("Insira o nick do jogador de até 5 dígitos: ");
+        scanVar = scanf("%s", slot[slotNum].nick);
+        slot[slotNum].mexido = 1;
+        while((getchar() != '\n')); //limpar buffer
+        } else {
+            printf(""color_purple"Esse slot já foi escolhido.\n"color_green"1 - Continuar\n"color_red"2 - Reescrever"color_reset"\n");
+        scanVar = scanf("%c", &reescrever);
+         while((getchar() != '\n')); //limpar buffer
+        switch(reescrever){
+          case '2':
+          printf("Insira o nick do jogador de até 5 dígitos: ");        
+          scanVar = scanf("%s", slot[slotNum].nick);
+          while((getchar() != '\n')); //limpar buffer
+          slot[slotNum].vitorias = 0;
+          slot[slotNum].derrotas = 0;
+            
+         
+          break;
+          default:
+            
+          break;
+        }
+              
+        }
+          
+          
+          
+
+          
         sysVar = system("clear");
         printf(" ___________________________\n");
       printf("| SELEÇÃO DE FORMATO        |\n");
@@ -379,10 +468,12 @@ int main(){
             fimJogo1 = 0;
             if(SAIR == 0){
             printf("Você venceu o jogo!\n");
+            slot[slotNum].vitorias = slot[slotNum].vitorias + 1; 
             while((getchar() != '\n')); //limpar buffer
             break;} else if(SAIR == 1){
               SAIR = 0;
               printf("Você desistiu do jogo.\n");
+              slot[slotNum].derrotas = slot[slotNum].derrotas + 1; 
               while((getchar() != '\n')); //limpar buffer
               break;}
         } else if(menuJogos == '2'){
@@ -684,10 +775,12 @@ int main(){
             fimJogo2 = 0;
             if(SAIR == 0){
             printf("Você venceu o jogo!\n");
+              slot[slotNum].vitorias = slot[slotNum].vitorias + 1; 
             while((getchar() != '\n')); //limpar buffer
             break;} else if(SAIR == 1){
               SAIR = 0;
               printf("Você desistiu do jogo.\n");
+              slot[slotNum].derrotas = slot[slotNum].derrotas + 1;
               while((getchar() != '\n')); //limpar buffer
               break;}
         } else if(menuJogos == '3'){
@@ -990,10 +1083,12 @@ int main(){
             fimJogo3 = 0;
             if(SAIR == 0){
             printf("Você venceu o jogo!\n");
+              slot[slotNum].vitorias = slot[slotNum].vitorias + 1; 
             while((getchar() != '\n')); //limpar buffer
             break;} else if(SAIR == 1){
               SAIR = 0;
               printf("Você desistiu do jogo.\n");
+              slot[slotNum].derrotas = slot[slotNum].derrotas + 1;
               while((getchar() != '\n')); //limpar buffer
               break;}
         } else if(menuJogos == '4'){
@@ -1295,10 +1390,12 @@ int main(){
             fimJogo4 = 0;
             if(SAIR == 0){
             printf("Você venceu o jogo!\n");
+              slot[slotNum].vitorias = slot[slotNum].vitorias + 1; 
             while((getchar() != '\n')); //limpar buffer
             break;} else if(SAIR == 1){
               SAIR = 0;
               printf("Você desistiu do jogo.\n");
+              slot[slotNum].derrotas = slot[slotNum].derrotas + 1;
               while((getchar() != '\n')); //limpar buffer
               break;}
         }else if(menuJogos == '0'){
